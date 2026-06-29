@@ -17,7 +17,7 @@ DermoAI_Submission/
 ├── results_summary.json    # JSON summary of final training runs & evaluations
 ├── README.md               # This documentation file
 ├── webapp/
-│   └── index.html          # Premium, glassmorphic visual interface (Tailwind & Inter font)
+│   └── index.html          # Brutalist clinical UI — dark/light theme, PDF export, scroll-spy nav
 └── model_weights/
     └── ce_ls_best.pth      # Optimized, fine-tuned model checkpoint (~354.8 MB)
 ```
@@ -52,7 +52,12 @@ python main.py
 Open your browser and navigate to:
 **[http://localhost:8000](http://localhost:8000)**
 
-You can drag and drop any skin lesion image (or click to browse). The UI displays an instant image preview in the **Image Acquisition** box and returns a 12-class ranked differential and calibrated confidence intervals upon running analysis.
+The UI features a three-panel clinical workstation layout:
+- **Sidebar** — session context and navigation with scroll-spy
+- **Main panel** — image upload, specimen viewer, clinical findings, and triage banner
+- **Infobox** — ranked 12-class differential with calibrated confidence bars, severity triage, and PDF report export
+
+Dark/light theme toggle is available in the top bar.
 
 ---
 
