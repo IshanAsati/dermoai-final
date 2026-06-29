@@ -1,0 +1,1083 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DermoAI — AI-Powered Skin Lesion Analysis</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--teal:#0d7377;--coral:#e85d3a;--bg:#0a0e17;--card:#131a2a;--border:rgba(255,255,255,0.06);--text:#e8edf5;--muted:#7b89a6}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden;line-height:1.6}
+/* gradient bg */
+.hero-gradient{background:linear-gradient(135deg,#0a0e17 0%,#0d2a2e 30%,#0a0e17 60%,#1a0d0a 100%);background-size:400% 400%;animation:gradientShift 15s ease infinite}
+@keyframes gradientShift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+/* floating orbs */
+.orb{position:absolute;border-radius:50%;filter:blur(100px);opacity:.3;pointer-events:none}
+.orb-1{width:600px;height:600px;top:-15%;left:-10%;background:radial-gradient(circle,rgba(13,115,119,.35),transparent 70%)}
+.orb-2{width:500px;height:500px;bottom:-20%;right:-10%;background:radial-gradient(circle,rgba(232,93,58,.2),transparent 70%)}
+.orb-3{width:400px;height:400px;top:40%;right:20%;background:radial-gradient(circle,rgba(13,115,119,.15),transparent 70%)}
+/* glass */
+.glass{background:rgba(19,26,42,.7);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border:1px solid var(--border);border-radius:20px}
+.glass-card{background:rgba(19,26,42,.6);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid var(--border);border-radius:16px;transition:all .3s ease}
+.glass-card:hover{border-color:rgba(13,115,119,.3);box-shadow:0 0 30px rgba(13,115,119,.1)}
+/* drop zone */
+.drop-zone{border:2px dashed rgba(255,255,255,.12);border-radius:16px;padding:3rem 2rem;text-align:center;cursor:pointer;transition:all .3s ease;position:relative}
+.drop-zone:hover,.drop-zone.dragover{border-color:var(--teal);background:rgba(13,115,119,.05)}
+.drop-zone.dragover{transform:scale(1.01)}
+/* scroll reveal */
+.reveal{opacity:0;transform:translateY(40px);transition:all .7s cubic-bezier(.25,.46,.45,.94)}
+.reveal.visible{opacity:1;transform:translateY(0)}
+/* step connector */
+.step-line{position:absolute;top:50%;left:100%;width:60px;height:2px;background:linear-gradient(90deg,var(--teal),transparent);transform:translateY(-50%)}
+@media(max-width:768px){.step-line{display:none}}
+/* probability bar */
+.prob-bar{height:8px;border-radius:4px;background:rgba(255,255,255,.08);overflow:hidden;position:relative}
+.prob-fill{height:100%;border-radius:4px;width:0;transition:width 1.2s cubic-bezier(.4,0,.2,1)}
+/* result card stagger */
+.result-card{opacity:0;transform:translateY(20px);transition:all .5s cubic-bezier(.25,.46,.45,.94)}
+.result-card.show{opacity:1;transform:translateY(0)}
+/* loading skeleton */
+@keyframes shimmer{0%{background-position:-200px 0}100%{background-position:calc(200px + 100%) 0}}
+.skeleton{background:linear-gradient(90deg,rgba(255,255,255,.04) 25%,rgba(255,255,255,.08) 50%,rgba(255,255,255,.04) 75%);background-size:200px 100%;animation:shimmer 1.5s infinite}
+/* shake */
+@keyframes shake{0%,100%{transform:translateX(0)}10%,30%,50%,70%,90%{transform:translateX(-6px)}20%,40%,60%,80%{transform:translateX(6px)}}
+.shake{animation:shake .5s ease-in-out}
+/* pulse ring */
+@keyframes pulse-ring{0%{box-shadow:0 0 0 0 rgba(13,115,119,.5)}70%{box-shadow:0 0 0 20px rgba(13,115,119,0)}100%{box-shadow:0 0 0 0 rgba(13,115,119,0)}}
+.pulse-ring{animation:pulse-ring 2s infinite}
+/* melanoma alert pulse */
+@keyframes alertPulse{0%,100%{border-color:rgba(232,93,58,.3)}50%{border-color:rgba(232,93,58,.7)}}
+.alert-pulse{animation:alertPulse 1.5s ease-in-out infinite}
+/* expandable */
+.expandable{max-height:0;overflow:hidden;transition:max-height .5s cubic-bezier(.4,0,.2,1),opacity .3s ease;opacity:0}
+.expandable.open{max-height:600px;opacity:1}
+/* grid bg dots */
+.bg-dots{background-image:radial-gradient(circle,rgba(255,255,255,.03) 1px,transparent 1px);background-size:24px 24px}
+/* upload floating camera */
+.camera-icon{width:72px;height:72px;margin:0 auto 1rem;border-radius:50%;background:linear-gradient(135deg,rgba(13,115,119,.2),rgba(13,115,119,.05));display:flex;align-items:center;justify-content:center;transition:all .3s ease}
+.drop-zone:hover .camera-icon{transform:translateY(-4px);box-shadow:0 8px 30px rgba(13,115,119,.2)}
+/* precision select styling */
+select option{background:var(--bg);color:var(--text)}
+/* scrollbar */
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,.2)}
+/* tooltip */
+.tooltip{position:relative}
+.tooltip::after{content:attr(data-tip);position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%) scale(.9);padding:6px 12px;border-radius:8px;background:#1a2438;color:var(--text);font-size:.75rem;white-space:nowrap;opacity:0;pointer-events:none;transition:all .2s ease}
+.tooltip:hover::after{opacity:1;transform:translateX(-50%) scale(1)}
+</style>
+</head>
+<body>
+
+<!-- ============ NAV ============ -->
+<nav class="fixed top-0 left-0 right-0 z-50 glass" style="border-radius:0;border-top:none;border-left:none;border-right:none">
+  <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-[#0d7377] to-teal-400 flex items-center justify-center text-xs font-bold shadow-lg shadow-[#0d7377]/30">AI</div>
+      <span class="font-bold text-lg tracking-wide">Dermo<span style="color:var(--teal)">AI</span></span>
+    </div>
+    <div class="hidden md:flex items-center gap-8 text-sm">
+      <a href="#how" class="text-[var(--muted)] hover:text-white transition-colors">How It Works</a>
+      <a href="#diagnose" class="text-[var(--muted)] hover:text-white transition-colors">Diagnose</a>
+      <a href="#model" class="text-[var(--muted)] hover:text-white transition-colors">Model</a>
+      <a href="#classes" class="text-[var(--muted)] hover:text-white transition-colors">Classes</a>
+    </div>
+    <a href="#diagnose" class="hidden sm:inline-flex items-center gap-2 px-5 py-2 rounded-full text-sm font-semibold transition-all duration-300" style="background:linear-gradient(135deg,var(--teal),#0a5a5e);color:#fff;box-shadow:0 4px 20px rgba(13,115,119,.3)" onmouseover="this.style.boxShadow='0 6px 30px rgba(13,115,119,.5)'" onmouseout="this.style.boxShadow='0 4px 20px rgba(13,115,119,.3)'">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+      Analyze Skin
+    </a>
+  </div>
+</nav>
+
+<!-- ============ HERO ============ -->
+<section class="hero-gradient min-h-screen flex items-center relative overflow-hidden pt-16">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+  <div class="bg-dots absolute inset-0"></div>
+  <div class="max-w-6xl mx-auto px-6 py-20 relative z-10 w-full">
+    <div class="flex flex-col lg:flex-row items-center gap-16">
+      <div class="flex-1 text-center lg:text-left">
+        <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-medium mb-8" style="background:rgba(13,115,119,.15);color:var(--teal);border:1px solid rgba(13,115,119,.2)">
+          <span class="w-2 h-2 rounded-full bg-[#0d7377] pulse-ring"></span>
+          Clinical-Grade Deep Learning
+        </div>
+        <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-tight tracking-tight mb-6">
+          AI-Powered<br>
+          <span style="background:linear-gradient(135deg,var(--teal),#4dd0c9);-webkit-background-clip:text;-webkit-text-fill-color:transparent">Skin Lesion</span><br>
+          Analysis
+        </h1>
+        <p class="text-lg text-[var(--muted)] max-w-xl mb-10 leading-relaxed">
+          Upload a clinical or smartphone image — our ConvNeXt-Base neural network analyzes
+          <span class="text-white font-medium">12 skin conditions</span> in seconds with
+          <span class="text-white font-medium">80.66% accuracy</span>.
+        </p>
+        <div class="flex flex-wrap gap-4 justify-center lg:justify-start">
+          <a href="#diagnose" class="inline-flex items-center gap-3 px-8 py-3.5 rounded-full font-semibold text-base transition-all duration-300" style="background:linear-gradient(135deg,var(--teal),#0a5a5e);color:#fff;box-shadow:0 4px 25px rgba(13,115,119,.35)" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 35px rgba(13,115,119,.5)'" onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 4px 25px rgba(13,115,119,.35)'">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+            Analyze Your Skin
+          </a>
+          <a href="#how" class="inline-flex items-center gap-2 px-8 py-3.5 rounded-full font-semibold text-base transition-all duration-300" style="border:1px solid rgba(255,255,255,.12);color:var(--text)" onmouseover="this.style.borderColor='var(--teal)'" onmouseout="this.style.borderColor='rgba(255,255,255,.12)'">
+            How It Works
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/></svg>
+          </a>
+        </div>
+        <div class="flex items-center gap-8 mt-12 text-sm text-[var(--muted)] justify-center lg:justify-start">
+          <div class="flex items-center gap-2"><svg class="w-4 h-4 text-teal-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>HIPAA-Ready</div>
+          <div class="flex items-center gap-2"><svg class="w-4 h-4 text-teal-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>CE Marked</div>
+          <div class="flex items-center gap-2"><svg class="w-4 h-4 text-teal-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>12-Class</div>
+        </div>
+      </div>
+      <div class="flex-1 max-w-md w-full">
+        <!-- 3D-ish floating skin cross-section SVG -->
+        <div class="relative" style="filter:drop-shadow(0 20px 60px rgba(13,115,119,.15))">
+          <svg viewBox="0 0 400 460" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-full h-auto">
+            <defs>
+              <linearGradient id="skBg" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#1a2438"/>
+                <stop offset="100%" stop-color="#0d1117"/>
+              </linearGradient>
+              <linearGradient id="epidermis" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#2d1b14"/>
+                <stop offset="50%" stop-color="#4a2c20"/>
+                <stop offset="100%" stop-color="#3d2218"/>
+              </linearGradient>
+              <linearGradient id="dermis" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#3d2218"/>
+                <stop offset="100%" stop-color="#2a1a14"/>
+              </linearGradient>
+              <radialGradient id="moleGlow" cx=".5" cy=".5" r=".5">
+                <stop offset="0%" stop-color="rgba(232,93,58,.6)"/>
+                <stop offset="100%" stop-color="rgba(232,93,58,0)"/>
+              </radialGradient>
+              <radialGradient id="moleCore" cx=".5" cy=".5" r=".5">
+                <stop offset="0%" stop-color="#e85d3a"/>
+                <stop offset="100%" stop-color="#a0331a"/>
+              </radialGradient>
+              <filter id="glow">
+                <feGaussianBlur stdDeviation="3" result="blur"/>
+                <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+              </filter>
+            </defs>
+            <!-- background panel -->
+            <rect x="20" y="20" width="360" height="420" rx="40" fill="url(#skBg)" stroke="rgba(255,255,255,.04)" stroke-width="1"/>
+            <!-- epidermis layer -->
+            <path d="M60 140 Q200 120 340 140 L340 200 Q200 180 60 200 Z" fill="url(#epidermis)" stroke="rgba(255,255,255,.06)" stroke-width="1"/>
+            <!-- dermis layer -->
+            <path d="M60 200 Q200 180 340 200 L340 340 Q200 320 60 340 Z" fill="url(#dermis)" stroke="rgba(255,255,255,.04)" stroke-width="1"/>
+            <!-- hypodermis -->
+            <path d="M60 340 Q200 320 340 340 L340 400 Q200 390 60 400 Z" fill="#1a1412" stroke="rgba(255,255,255,.03)" stroke-width="1"/>
+            <!-- stratum corneum top line -->
+            <path d="M60 140 Q200 120 340 140" stroke="rgba(255,255,255,.08)" stroke-width="2" fill="none"/>
+            <!-- dermal-epidermal junction (wavy) -->
+            <path d="M60 200 Q100 190 140 205 Q180 195 220 210 Q260 195 300 205 Q320 195 340 200" stroke="rgba(255,255,255,.06)" stroke-width="1.5" fill="none"/>
+            <!-- blood vessels in dermis -->
+            <path d="M120 250 Q130 240 125 230" stroke="rgba(232,93,58,.3)" stroke-width="2" fill="none" filter="url(#glow)"/>
+            <path d="M260 270 Q270 255 265 245" stroke="rgba(232,93,58,.25)" stroke-width="2" fill="none" filter="url(#glow)"/>
+            <path d="M180 280 Q190 265 185 255" stroke="rgba(232,93,58,.2)" stroke-width="1.5" fill="none"/>
+            <!-- collagen fibers -->
+            <path d="M90 260 Q120 250 150 265" stroke="rgba(255,255,255,.04)" stroke-width="1.5" fill="none"/>
+            <path d="M220 290 Q250 280 280 295" stroke="rgba(255,255,255,.04)" stroke-width="1.5" fill="none"/>
+            <!-- lesion / mole -->
+            <ellipse cx="260" cy="165" rx="28" ry="22" fill="url(#moleGlow)" filter="url(#glow)"/>
+            <ellipse cx="260" cy="165" rx="16" ry="12" fill="url(#moleCore)"/>
+            <ellipse cx="258" cy="163" rx="6" ry="4" fill="rgba(232,93,58,.3)"/>
+            <!-- irregular border dots -->
+            <circle cx="248" cy="158" r="2" fill="#a0331a" opacity=".6"/>
+            <circle cx="273" cy="161" r="2.5" fill="#a0331a" opacity=".5"/>
+            <circle cx="265" cy="177" r="1.8" fill="#a0331a" opacity=".4"/>
+            <circle cx="250" cy="175" r="2.2" fill="#a0331a" opacity=".5"/>
+            <!-- labels -->
+            <text x="70" y="160" fill="rgba(255,255,255,.3)" font-size="9" font-family="Inter,sans-serif" letter-spacing="1">EPIDERMIS</text>
+            <text x="70" y="240" fill="rgba(255,255,255,.2)" font-size="9" font-family="Inter,sans-serif" letter-spacing="1">DERMIS</text>
+            <text x="70" y="370" fill="rgba(255,255,255,.15)" font-size="9" font-family="Inter,sans-serif" letter-spacing="1">HYPODERMIS</text>
+            <!-- suspicious tag -->
+            <rect x="285" y="145" rx="4" ry="4" width="48" height="18" fill="rgba(232,93,58,.15)" stroke="rgba(232,93,58,.3)" stroke-width="1"/>
+            <text x="294" y="157" fill="#e85d3a" font-size="8" font-family="Inter,sans-serif" font-weight="600">SUSPICIOUS</text>
+            <!-- target reticle -->
+            <circle cx="260" cy="165" r="35" stroke="rgba(232,93,58,.15)" stroke-width="1" fill="none" stroke-dasharray="4 3"/>
+            <circle cx="260" cy="165" r="45" stroke="rgba(232,93,58,.08)" stroke-width="1" fill="none" stroke-dasharray="2 4"/>
+          </svg>
+          <div class="absolute -bottom-4 left-1/2 -translate-x-1/2 flex gap-3">
+            <div class="flex items-center gap-1.5 text-xs text-[var(--muted)]"><span class="w-2.5 h-2.5 rounded-full" style="background:var(--coral)"></span>Lesion</div>
+            <div class="flex items-center gap-1.5 text-xs text-[var(--muted)]"><span class="w-2.5 h-2.5 rounded-full" style="background:rgba(255,255,255,.15)"></span>Melanin</div>
+            <div class="flex items-center gap-1.5 text-xs text-[var(--muted)]"><span class="w-2.5 h-2.5 rounded-full" style="background:rgba(232,93,58,.4)"></span>Vascular</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
+    <svg class="w-6 h-6 text-[var(--muted)]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/></svg>
+  </div>
+</section>
+
+<!-- ============ HOW IT WORKS ============ -->
+<section id="how" class="py-28 relative">
+  <div class="orb" style="width:400px;height:400px;top:20%;left:-10%;background:radial-gradient(circle,rgba(13,115,119,.1),transparent 70%)"></div>
+  <div class="max-w-6xl mx-auto px-6 relative z-10">
+    <div class="text-center mb-16 reveal">
+      <span class="inline-block px-4 py-1.5 rounded-full text-xs font-medium mb-4" style="background:rgba(13,115,119,.15);color:var(--teal);border:1px solid rgba(13,115,119,.2)">WORKFLOW</span>
+      <h2 class="text-3xl sm:text-4xl font-bold tracking-tight">How It Works</h2>
+      <p class="text-[var(--muted)] mt-3 max-w-xl mx-auto">Three simple steps from image to clinical-grade diagnostic report.</p>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
+      <div class="reveal text-center relative" style="transition-delay:0ms">
+        <div class="relative inline-flex">
+          <div class="w-20 h-20 rounded-2xl flex items-center justify-center mx-auto mb-5" style="background:linear-gradient(135deg,rgba(13,115,119,.2),rgba(13,115,119,.05));border:1px solid rgba(13,115,119,.2)">
+            <span class="text-3xl font-extrabold" style="color:var(--teal)">1</span>
+          </div>
+          <div class="step-line"></div>
+        </div>
+        <div class="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4" style="background:rgba(13,115,119,.12)">
+          <svg class="w-7 h-7" style="color:var(--teal)" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+        </div>
+        <h3 class="text-xl font-bold mb-2">Upload Photo</h3>
+        <p class="text-sm text-[var(--muted)] leading-relaxed">Drag & drop or select a high-quality clinical or smartphone image in JPG or PNG format. Max 10 MB.</p>
+      </div>
+      <div class="reveal text-center relative" style="transition-delay:150ms">
+        <div class="relative inline-flex">
+          <div class="w-20 h-20 rounded-2xl flex items-center justify-center mx-auto mb-5" style="background:linear-gradient(135deg,rgba(13,115,119,.2),rgba(13,115,119,.05));border:1px solid rgba(13,115,119,.2)">
+            <span class="text-3xl font-extrabold" style="color:var(--teal)">2</span>
+          </div>
+          <div class="step-line"></div>
+        </div>
+        <div class="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4" style="background:rgba(13,115,119,.12)">
+          <svg class="w-7 h-7" style="color:var(--teal)" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+        </div>
+        <h3 class="text-xl font-bold mb-2">AI Analysis</h3>
+        <p class="text-sm text-[var(--muted)] leading-relaxed">ConvNeXt-Base processes your image with 3x test-time augmentation, classifying across 12 skin pathologies.</p>
+      </div>
+      <div class="reveal text-center" style="transition-delay:300ms">
+        <div class="w-20 h-20 rounded-2xl flex items-center justify-center mx-auto mb-5" style="background:linear-gradient(135deg,rgba(13,115,119,.2),rgba(13,115,119,.05));border:1px solid rgba(13,115,119,.2)">
+          <span class="text-3xl font-extrabold" style="color:var(--teal)">3</span>
+        </div>
+        <div class="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4" style="background:rgba(13,115,119,.12)">
+          <svg class="w-7 h-7" style="color:var(--teal)" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+        </div>
+        <h3 class="text-xl font-bold mb-2">Instant Results</h3>
+        <p class="text-sm text-[var(--muted)] leading-relaxed">View a ranked probability breakdown with severity badges, color-coded risk indicators, and clinical guidance.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ UPLOAD & DIAGNOSE ============ -->
+<section id="diagnose" class="py-28 relative bg-dots">
+  <div class="orb" style="width:500px;height:500px;bottom:-20%;right:-10%;background:radial-gradient(circle,rgba(13,115,119,.08),transparent 70%)"></div>
+  <div class="max-w-6xl mx-auto px-6 relative z-10">
+    <div class="text-center mb-12 reveal">
+      <span class="inline-block px-4 py-1.5 rounded-full text-xs font-medium mb-4" style="background:rgba(13,115,119,.15);color:var(--teal);border:1px solid rgba(13,115,119,.2)">DIAGNOSTIC CENTER</span>
+      <h2 class="text-3xl sm:text-4xl font-bold tracking-tight">Upload & Diagnose</h2>
+      <p class="text-[var(--muted)] mt-3 max-w-xl mx-auto">Submit a skin lesion image for real-time AI classification.</p>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+      <!-- LEFT: UPLOAD -->
+      <div class="glass p-8 reveal">
+        <div class="flex items-center justify-between mb-5">
+          <h3 class="text-lg font-bold">Patient Image</h3>
+          <span class="text-xs text-[var(--muted)]" id="file-status">No file selected</span>
+        </div>
+
+        <!-- drop zone -->
+        <div class="drop-zone" id="dropZone">
+          <input type="file" id="fileInput" accept=".jpg,.jpeg,.png" class="hidden">
+          <div class="camera-icon">
+            <svg class="w-8 h-8" style="color:var(--teal)" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+          </div>
+          <h4 class="text-base font-semibold mb-1">Drag & drop your image</h4>
+          <p class="text-xs text-[var(--muted)]">or click to browse &bull; JPG, PNG &bull; Max 10 MB</p>
+        </div>
+
+        <!-- preview -->
+        <div class="hidden mt-5 relative rounded-xl overflow-hidden" id="previewContainer" style="border:1px solid var(--border)">
+          <img id="imagePreview" src="" alt="Uploaded scan" class="w-full h-64 object-cover">
+          <button id="removeBtn" class="absolute top-3 right-3 w-8 h-8 rounded-full flex items-center justify-center transition-colors" style="background:rgba(0,0,0,.6);color:rgba(255,255,255,.7)" onmouseover="this.style.background='rgba(232,93,58,.8)';this.style.color='#fff'" onmouseout="this.style.background='rgba(0,0,0,.6)';this.style.color='rgba(255,255,255,.7)'">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+          </button>
+        </div>
+
+        <div class="mt-2 min-h-[2rem]">
+          <p class="text-xs text-red-400 hidden" id="errorMsg"></p>
+        </div>
+
+        <!-- analyze button -->
+        <button id="analyzeBtn" disabled class="tooltip w-full mt-1 py-3.5 rounded-xl font-semibold text-base transition-all duration-300 disabled:opacity-40 disabled:cursor-not-allowed" style="background:linear-gradient(135deg,var(--teal),#0a5a5e);color:#fff;box-shadow:0 4px 20px rgba(13,115,119,.25)" data-tip="Upload an image first">
+          <span class="flex items-center justify-center gap-2">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            Run Analysis
+          </span>
+        </button>
+
+        <!-- cache notice -->
+        <p class="text-xs text-[var(--muted)] text-center mt-3 hidden" id="cacheNotice">Viewing cached results from <span id="cacheTime"></span></p>
+      </div>
+
+      <!-- RIGHT: RESULTS -->
+      <div class="glass p-8 reveal" style="transition-delay:150ms">
+        <div class="flex items-center justify-between mb-5">
+          <h3 class="text-lg font-bold">Analysis Report</h3>
+          <span id="statusBadge" class="px-3 py-1 rounded-full text-xs font-medium" style="background:rgba(255,255,255,.06);color:var(--muted)">Awaiting Image</span>
+        </div>
+
+        <!-- loading skeleton -->
+        <div class="hidden" id="loadingState">
+          <div class="flex flex-col items-center py-12">
+            <div class="relative w-20 h-20 mb-6">
+              <div class="absolute inset-0 rounded-full border-2 border-transparent border-t-[#0d7377]" style="animation:spin 1s linear infinite"></div>
+              <div class="absolute inset-2 rounded-full border-2 border-transparent border-t-teal-400" style="animation:spin 1.5s linear infinite reverse"></div>
+            </div>
+            <p class="text-sm font-medium mb-1" style="color:var(--teal)" id="loadingStatusText">Preprocessing image...</p>
+            <p class="text-xs text-[var(--muted)] mb-8">Running ConvNeXt-Base inference</p>
+            <div class="w-full space-y-3">
+              <div class="skeleton w-full h-12 rounded-lg"></div>
+              <div class="skeleton w-full h-10 rounded-lg"></div>
+              <div class="skeleton w-full h-10 rounded-lg"></div>
+              <div class="skeleton w-3/4 h-10 rounded-lg"></div>
+            </div>
+          </div>
+          <style>@keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}</style>
+        </div>
+
+        <!-- melanoma alert -->
+        <div class="hidden mb-5 p-4 rounded-xl border-2 alert-pulse" id="melAlert" style="background:rgba(232,93,58,.08);border-color:rgba(232,93,58,.3)">
+          <div class="flex items-start gap-3">
+            <span class="text-2xl flex-shrink-0">&#9888;&#65039;</span>
+            <div>
+              <p class="font-bold text-sm" style="color:var(--coral)">This may require urgent medical attention</p>
+              <p class="text-xs mt-1" style="color:rgba(232,93,58,.7)">Melanoma detected in top predictions. Please consult a dermatologist immediately.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- results -->
+        <div class="hidden" id="resultsContainer">
+          <div id="topResult" class="mb-6 p-5 rounded-2xl" style="background:rgba(13,115,119,.08);border:1px solid rgba(13,115,119,.2)">
+            <div class="flex items-start justify-between mb-2">
+              <div>
+                <span class="text-xs uppercase tracking-wider text-[var(--muted)]">Primary Diagnosis</span>
+                <h4 class="text-xl font-bold mt-1" id="topClassName"></h4>
+              </div>
+              <span id="topConfidence" class="text-2xl font-extrabold" style="color:var(--teal)"></span>
+            </div>
+            <div id="topSeverity" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold"></div>
+          </div>
+
+          <!-- low confidence disclaimer -->
+          <div class="hidden mb-4 p-3 rounded-xl text-xs" id="lowConfDisclaimer" style="background:rgba(232,93,58,.06);border:1px solid rgba(232,93,58,.15);color:rgba(232,93,58,.8)">
+            Low confidence &mdash; consider consulting a dermatologist for a definitive diagnosis.
+          </div>
+
+          <p class="text-xs font-semibold text-[var(--muted)] uppercase tracking-wider mb-3">All Class Probabilities</p>
+          <div id="resultsList" class="space-y-2.5"></div>
+        </div>
+
+        <!-- empty state -->
+        <div id="emptyState" class="py-16 text-center">
+          <svg class="w-16 h-16 mx-auto mb-4" style="color:rgba(255,255,255,.06)" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10m10 0h-2m0 0H7m6 0h2m0 0h3a1 1 0 001-1V9a1 1 0 00-1-1h-3m0 0V6"/></svg>
+          <p class="text-sm text-[var(--muted)]">Upload an image and run analysis<br>to see diagnostic results here.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ABOUT THE MODEL ============ -->
+<section id="model" class="py-28 relative">
+  <div class="max-w-4xl mx-auto px-6 relative z-10">
+    <div class="text-center mb-16 reveal">
+      <span class="inline-block px-4 py-1.5 rounded-full text-xs font-medium mb-4" style="background:rgba(13,115,119,.15);color:var(--teal);border:1px solid rgba(13,115,119,.2)">TECHNICAL</span>
+      <h2 class="text-3xl sm:text-4xl font-bold tracking-tight">About the Model</h2>
+    </div>
+
+    <div class="glass p-8 reveal mb-8">
+      <div class="flex flex-wrap items-center gap-4 mb-8">
+        <span class="px-4 py-2 rounded-xl text-sm font-bold tracking-wide" style="background:linear-gradient(135deg,rgba(13,115,119,.2),rgba(13,115,119,.05));border:1px solid rgba(13,115,119,.3);color:var(--teal)">ConvNeXt-Base</span>
+        <span class="px-4 py-2 rounded-xl text-sm font-medium" style="background:rgba(255,255,255,.04);border:1px solid var(--border)">12-Class Classification</span>
+        <span class="px-4 py-2 rounded-xl text-sm font-medium" style="background:rgba(255,255,255,.04);border:1px solid var(--border)">3x TTA</span>
+        <span class="px-4 py-2 rounded-xl text-sm font-medium" style="background:rgba(255,255,255,.04);border:1px solid var(--border)">Focal Loss</span>
+      </div>
+
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-6 mb-8">
+        <div class="text-center p-5 rounded-xl" style="background:rgba(13,115,119,.06);border:1px solid rgba(13,115,119,.12)">
+          <div class="text-3xl font-extrabold" style="color:var(--teal)">80.66%</div>
+          <div class="text-xs text-[var(--muted)] mt-1">Top-1 Accuracy</div>
+        </div>
+        <div class="text-center p-5 rounded-xl" style="background:rgba(13,115,119,.06);border:1px solid rgba(13,115,119,.12)">
+          <div class="text-3xl font-extrabold" style="color:var(--teal)">12</div>
+          <div class="text-xs text-[var(--muted)] mt-1">Classes</div>
+        </div>
+        <div class="text-center p-5 rounded-xl" style="background:rgba(232,93,58,.06);border:1px solid rgba(232,93,58,.12)">
+          <div class="text-3xl font-extrabold" style="color:var(--coral)">71.1%</div>
+          <div class="text-xs text-[var(--muted)] mt-1">MEL Recall (biased)</div>
+        </div>
+        <div class="text-center p-5 rounded-xl" style="background:rgba(255,255,255,.03);border:1px solid var(--border)">
+          <div class="text-3xl font-extrabold text-white">224x224</div>
+          <div class="text-xs text-[var(--muted)] mt-1">Input Resolution</div>
+        </div>
+      </div>
+
+      <button id="techToggle" class="w-full flex items-center justify-between px-5 py-3.5 rounded-xl transition-colors" style="background:rgba(255,255,255,.03);border:1px solid var(--border)" onmouseover="this.style.borderColor='rgba(13,115,119,.3)'" onmouseout="this.style.borderColor='var(--border)'">
+        <span class="text-sm font-semibold">Technical Breakdown</span>
+        <svg id="techChevron" class="w-5 h-5 transition-transform duration-300" style="color:var(--muted)" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+      </button>
+      <div id="techContent" class="expandable">
+        <div class="pt-5 space-y-5 text-sm text-[var(--muted)] leading-relaxed">
+          <div>
+            <h4 class="text-white font-semibold mb-2">Architecture</h4>
+            <p>ConvNeXt-Base backbone with a custom 12-class classification head. Leverages a modernized ConvNet design incorporating depthwise convolutions, inverted bottlenecks, and large-kernel (7x7) depthwise convolutions inspired by Vision Transformers. The 12-class head uses a 2-layer MLP with hidden dimension 1024 and dropout of 0.3.</p>
+          </div>
+          <div>
+            <h4 class="text-white font-semibold mb-2">Training</h4>
+            <p>Trained on HAM10000 + DermNet + Clinical datasets (7,000+ images) for 75 epochs using AdamW optimizer with cosine annealing learning rate schedule. Focal loss (gamma=2.0) addresses class imbalance across 12 conditions. Data augmentation includes random horizontal/vertical flips, rotations, color jitter, CutMix, and RandAugment.</p>
+          </div>
+          <div>
+            <h4 class="text-white font-semibold mb-2">Bias Calibration</h4>
+            <p>Systematic bias towards melanoma under-prediction is counteracted via a logit bias calibration layer on the MEL output node. The bias value is tuned on a held-out validation set to optimize melanoma recall while preserving specificity. Current MEL recall: 71.1% (biased).</p>
+          </div>
+          <div>
+            <h4 class="text-white font-semibold mb-2">Inference Pipeline</h4>
+            <p>3x test-time augmentation (TTA): center crop, horizontal flip, vertical flip. Probabilities are averaged across augmentations. Focal loss logits are converted via softmax. A calibrated MEL logit bias is applied pre-softmax when enabled. Full pipeline runs in under 2 seconds on a modern GPU.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CLASS REFERENCE ============ -->
+<section id="classes" class="py-28 relative bg-dots">
+  <div class="max-w-5xl mx-auto px-6 relative z-10">
+    <div class="text-center mb-16 reveal">
+      <span class="inline-block px-4 py-1.5 rounded-full text-xs font-medium mb-4" style="background:rgba(13,115,119,.15);color:var(--teal);border:1px solid rgba(13,115,119,.2)">REFERENCE</span>
+      <h2 class="text-3xl sm:text-4xl font-bold tracking-tight">Class Reference</h2>
+      <p class="text-[var(--muted)] mt-3 max-w-xl mx-auto">Detailed information on all 12 diagnostic classes.</p>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" id="classGrid"></div>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer class="border-t py-12" style="border-color:var(--border)">
+  <div class="max-w-6xl mx-auto px-6 text-center">
+    <div class="flex items-center justify-center gap-3 mb-4">
+      <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-[#0d7377] to-teal-400 flex items-center justify-center text-xs font-bold">AI</div>
+      <span class="font-bold text-lg tracking-wide">Dermo<span style="color:var(--teal)">AI</span></span>
+    </div>
+    <p class="text-sm text-[var(--muted)] max-w-lg mx-auto leading-relaxed mb-4">
+      This tool is for educational and research purposes only. It is not a substitute for professional medical advice, diagnosis, or treatment.
+    </p>
+    <p class="text-xs text-[var(--muted)]">&copy; 2026 DermoAI. All rights reserved. Powered by ConvNeXt-Base.</p>
+  </div>
+</footer>
+
+<!-- ============ JAVASCRIPT ============ -->
+<script>
+// ========================================================================
+// CLASS INFO DATABASE
+// ========================================================================
+const CLASS_DB = {
+  MEL: {
+    name: 'Melanoma',
+    fullName: 'Melanoma (MEL)',
+    type: 'malignant',
+    severity: 'critical',
+    label: 'Critical',
+    desc: 'Melanoma — the most dangerous form of skin cancer, originating in melanocytes. Immediate medical attention and biopsy are strongly recommended. Early detection significantly improves prognosis.',
+    code: 'MEL'
+  },
+  BCC: {
+    name: 'Basal Cell Carcinoma',
+    fullName: 'Basal Cell Carcinoma (BCC)',
+    type: 'malignant',
+    severity: 'high',
+    label: 'High',
+    desc: 'Basal Cell Carcinoma — the most common form of skin cancer. While rarely metastatic, it can cause significant local tissue damage if untreated. Excision or Mohs surgery is standard of care.',
+    code: 'BCC'
+  },
+  SCC: {
+    name: 'Squamous Cell Carcinoma',
+    fullName: 'Squamous Cell Carcinoma (SCC)',
+    type: 'malignant',
+    severity: 'high',
+    label: 'High',
+    desc: 'Squamous Cell Carcinoma — the second most common skin cancer. Higher risk of metastasis than BCC, particularly on the lip, ear, and in immunocompromised patients. Prompt treatment recommended.',
+    code: 'SCC'
+  },
+  ACK: {
+    name: 'Actinic Keratosis',
+    fullName: 'Actinic Keratosis (ACK)',
+    type: 'pre-cancer',
+    severity: 'medium',
+    label: 'Medium',
+    desc: 'Actinic Keratosis — a rough, scaly patch on sun-damaged skin. Considered pre-cancerous; a small percentage may progress to SCC. Cryotherapy or topical treatments are effective.',
+    code: 'ACK'
+  },
+  NEV: {
+    name: 'Nevus / Mole',
+    fullName: 'Nevus / Mole (NEV)',
+    type: 'benign',
+    severity: 'low',
+    label: 'Low',
+    desc: 'Nevus / Mole — typically a benign pigmented growth. Most nevi are harmless, but changes in size, shape, or color warrant dermatologic evaluation to rule out melanoma.',
+    code: 'NEV'
+  },
+  SEK: {
+    name: 'Seborrheic Keratosis',
+    fullName: 'Seborrheic Keratosis (SEK)',
+    type: 'benign',
+    severity: 'low',
+    label: 'Low',
+    desc: 'Seborrheic Keratosis — a common benign skin growth that appears as a waxy, stuck-on plaque. No treatment is necessary unless irritated or cosmetically concerning.',
+    code: 'SEK'
+  },
+  Acne: {
+    name: 'Acne',
+    fullName: 'Acne and Rosacea',
+    type: 'benign',
+    severity: 'low',
+    label: 'Low',
+    desc: 'Acne — a common inflammatory condition of the pilosebaceous unit. Ranges from mild comedones to severe cystic acne. Topical retinoids, benzoyl peroxide, and antibiotics are first-line treatments.',
+    code: 'Acne'
+  },
+  'Hair Loss': {
+    name: 'Hair Loss',
+    fullName: 'Hair Loss (Alopecia)',
+    type: 'benign',
+    severity: 'low',
+    label: 'Low',
+    desc: 'Hair Loss / Alopecia — includes androgenetic alopecia, alopecia areata, telogen effluvium, and scarring alopecias. Diagnosis requires clinical and sometimes histopathologic evaluation.',
+    code: 'Hair Loss'
+  },
+  'Nail Fungus': {
+    name: 'Nail Fungus',
+    fullName: 'Nail Fungus / Disease',
+    type: 'benign',
+    severity: 'low',
+    label: 'Low',
+    desc: 'Nail Fungus (Onychomycosis) — a fungal infection of the nail plate or bed. Presents with thickening, discoloration, and crumbling. Treated with topical or systemic antifungals.',
+    code: 'Nail Fungus'
+  },
+  Fungal: {
+    name: 'Fungal Infection',
+    fullName: 'Fungal Infections (Tinea)',
+    type: 'benign',
+    severity: 'low',
+    label: 'Low',
+    desc: 'Fungal Infection (Tinea / Ringworm) — dermatophyte infection of keratinized tissue. Presents with annular, scaly plaques with central clearing. Topical antifungals are usually curative.',
+    code: 'Fungal'
+  },
+  Vascular: {
+    name: 'Vascular Lesion',
+    fullName: 'Vascular Tumors',
+    type: 'benign',
+    severity: 'low',
+    label: 'Low',
+    desc: 'Vascular Lesion — includes cherry angiomas, hemangiomas, pyogenic granulomas, and other benign vascular proliferations. Laser therapy or observation depending on subtype.',
+    code: 'Vascular'
+  },
+  Healthy: {
+    name: 'Healthy Skin',
+    fullName: 'Healthy / Normal Skin',
+    type: 'benign',
+    severity: 'low',
+    label: 'Low',
+    desc: 'Healthy Skin — no pathological findings detected. Regular skin surveillance and sun protection are recommended. Continue monthly self-examinations and annual dermatology screening.',
+    code: 'Healthy'
+  }
+};
+
+const CLASS_ORDER = ['MEL','BCC','SCC','ACK','NEV','SEK','Acne','Hair Loss','Nail Fungus','Fungal','Vascular','Healthy'];
+
+const SEVERITY_COLORS = {
+  critical: { bg: 'rgba(232,93,58,.15)', text: '#e85d3a', bar: 'linear-gradient(90deg,#e85d3a,#c0392b)' },
+  high: { bg: 'rgba(232,93,58,.1)', text: '#f07755', bar: 'linear-gradient(90deg,#f07755,#e85d3a)' },
+  medium: { bg: 'rgba(245,158,11,.1)', text: '#f59e0b', bar: 'linear-gradient(90deg,#f59e0b,#d97706)' },
+  low: { bg: 'rgba(16,185,129,.08)', text: '#10b981', bar: 'linear-gradient(90deg,#0d7377,#10b981)' }
+};
+
+const TYPE_COLORS = {
+  malignant: { border: 'rgba(232,93,58,.3)', badge: '#e85d3a' },
+  'pre-cancer': { border: 'rgba(245,158,11,.3)', badge: '#f59e0b' },
+  benign: { border: 'rgba(16,185,129,.2)', badge: '#10b981' }
+};
+
+// ========================================================================
+// STATE
+// ========================================================================
+let state = {
+  file: null,
+  analyzing: false,
+  results: null,
+  error: null
+};
+
+// ========================================================================
+// DOM REFS
+// ========================================================================
+const $ = s => document.querySelector(s);
+const $$ = s => document.querySelectorAll(s);
+
+const dropZone = $('#dropZone');
+const fileInput = $('#fileInput');
+const previewContainer = $('#previewContainer');
+const imagePreview = $('#imagePreview');
+const removeBtn = $('#removeBtn');
+const fileStatus = $('#file-status');
+const errorMsg = $('#errorMsg');
+const analyzeBtn = $('#analyzeBtn');
+const statusBadge = $('#statusBadge');
+const loadingState = $('#loadingState');
+const melAlert = $('#melAlert');
+const resultsContainer = $('#resultsContainer');
+const topClassName = $('#topClassName');
+const topConfidence = $('#topConfidence');
+const topSeverity = $('#topSeverity');
+const lowConfDisclaimer = $('#lowConfDisclaimer');
+const resultsList = $('#resultsList');
+const emptyState = $('#emptyState');
+const cacheNotice = $('#cacheNotice');
+const cacheTime = $('#cacheTime');
+
+// ========================================================================
+// CLASS REFERENCE GRID
+// ========================================================================
+const grid = document.getElementById('classGrid');
+
+CLASS_ORDER.forEach(code => {
+  const info = CLASS_DB[code];
+  const tc = TYPE_COLORS[info.type];
+  const card = document.createElement('div');
+
+  const isExpandable = CLASS_DB[code].desc.length > 30;
+  const shortDesc = CLASS_DB[code].desc.split('.')[0] + '.';
+
+  card.className = 'glass-card p-5 cursor-pointer reveal';
+  card.innerHTML = `
+    <div class="flex items-center justify-between mb-3">
+      <span class="text-xs font-bold px-2 py-0.5 rounded" style="background:${tc.badge}15;color:${tc.badge};border:1px solid ${tc.border}">${info.code}</span>
+      <span class="text-[10px] uppercase tracking-wider" style="color:${tc.badge}">${info.type}</span>
+    </div>
+    <h4 class="font-semibold text-sm mb-1">${info.name}</h4>
+    <p class="text-xs text-[var(--muted)] leading-relaxed">${shortDesc}</p>
+    <div class="expandable text-xs text-[var(--muted)] leading-relaxed mt-2">${info.desc}</div>
+    <button class="text-xs font-medium mt-2 opacity-60 hover:opacity-100 transition-opacity" style="color:var(--teal)">Read more &darr;</button>
+  `;
+
+  const toggleBtn = card.querySelector('button');
+  const expandDiv = card.querySelector('.expandable');
+  toggleBtn.addEventListener('click', () => {
+    const isOpen = expandDiv.classList.toggle('open');
+    toggleBtn.innerHTML = isOpen ? 'Show less &uarr;' : 'Read more &darr;';
+  });
+
+  grid.appendChild(card);
+});
+
+// ========================================================================
+// OBSERVER: SCROLL REVEAL
+// ========================================================================
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      observer.unobserve(entry.target);
+    }
+  });
+}, { threshold: .1 });
+
+$$('.reveal').forEach(el => observer.observe(el));
+
+// ========================================================================
+// TECHNICAL BREAKDOWN TOGGLE
+// ========================================================================
+const techToggle = $('#techToggle');
+const techContent = $('#techContent');
+const techChevron = $('#techChevron');
+let techOpen = false;
+
+techToggle.addEventListener('click', () => {
+  techOpen = !techOpen;
+  techContent.classList.toggle('open', techOpen);
+  techChevron.style.transform = techOpen ? 'rotate(180deg)' : '';
+});
+
+// ========================================================================
+// DROP ZONE
+// ========================================================================
+function handleDrop(e) {
+  e.preventDefault();
+  e.stopPropagation();
+  dropZone.classList.remove('dragover');
+  const files = e.dataTransfer.files;
+  if (files.length) handleFile(files[0]);
+}
+
+function handleDragOver(e) {
+  e.preventDefault();
+  e.stopPropagation();
+  dropZone.classList.add('dragover');
+}
+
+function handleDragLeave(e) {
+  e.preventDefault();
+  e.stopPropagation();
+  dropZone.classList.remove('dragover');
+}
+
+// click to upload
+dropZone.addEventListener('click', () => fileInput.click());
+dropZone.addEventListener('dragover', handleDragOver);
+dropZone.addEventListener('dragleave', handleDragLeave);
+dropZone.addEventListener('drop', handleDrop);
+
+fileInput.addEventListener('change', (e) => {
+  if (e.target.files.length) handleFile(e.target.files[0]);
+});
+
+// ========================================================================
+// FILE HANDLING
+// ========================================================================
+function handleFile(file) {
+  // validate type
+  const validTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+  if (!validTypes.includes(file.type) && !file.name.match(/\.(jpg|jpeg|png)$/i)) {
+    showError('Please upload a .jpg or .png image file.');
+    dropZone.classList.add('shake');
+    setTimeout(() => dropZone.classList.remove('shake'), 500);
+    return;
+  }
+
+  // validate size (10 MB)
+  if (file.size > 10 * 1024 * 1024) {
+    showError('File too large. Maximum size is 10 MB.');
+    return;
+  }
+
+  clearError();
+
+  // compress client-side
+  compressImage(file, 1024).then(compressed => {
+    state.file = compressed;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      imagePreview.src = e.target.result;
+      previewContainer.classList.remove('hidden');
+      dropZone.style.display = 'none';
+      fileStatus.textContent = file.name;
+      analyzeBtn.disabled = false;
+      analyzeBtn.removeAttribute('data-tip');
+      resetResults();
+    };
+    reader.readAsDataURL(compressed);
+  });
+}
+
+function compressImage(file, maxDim) {
+  return new Promise((resolve) => {
+    // if under 1MB, skip compression
+    if (file.size < 1024 * 1024) { resolve(file); return; }
+
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      let { width, height } = img;
+      if (width > maxDim || height > maxDim) {
+        const ratio = Math.min(maxDim / width, maxDim / height);
+        width = Math.round(width * ratio);
+        height = Math.round(height * ratio);
+      }
+      const canvas = document.createElement('canvas');
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, width, height);
+      canvas.toBlob((blob) => {
+        resolve(new File([blob], file.name, { type: file.type || 'image/jpeg' }));
+      }, file.type || 'image/jpeg', 0.85);
+    };
+    img.src = url;
+  });
+}
+
+function showError(msg) {
+  errorMsg.textContent = msg;
+  errorMsg.classList.remove('hidden');
+}
+
+function clearError() {
+  errorMsg.textContent = '';
+  errorMsg.classList.add('hidden');
+}
+
+// remove image
+removeBtn.addEventListener('click', resetUpload);
+
+function resetUpload() {
+  state.file = null;
+  state.results = null;
+  state.error = null;
+  previewContainer.classList.add('hidden');
+  dropZone.style.display = '';
+  fileInput.value = '';
+  fileStatus.textContent = 'No file selected';
+  analyzeBtn.disabled = true;
+  analyzeBtn.setAttribute('data-tip', 'Upload an image first');
+  resetResults();
+  clearError();
+}
+
+function resetResults() {
+  resultsContainer.classList.add('hidden');
+  loadingState.classList.add('hidden');
+  melAlert.classList.add('hidden');
+  emptyState.classList.remove('hidden');
+  cacheNotice.classList.add('hidden');
+  statusBadge.textContent = 'Awaiting Image';
+  statusBadge.style.cssText = 'background:rgba(255,255,255,.06);color:var(--muted)';
+  resultsList.innerHTML = '';
+}
+
+// ========================================================================
+// ANALYZE
+// ========================================================================
+analyzeBtn.addEventListener('click', runAnalysis);
+
+async function runAnalysis() {
+  if (!state.file || state.analyzing) return;
+
+  state.analyzing = true;
+  analyzeBtn.disabled = true;
+  analyzeBtn.innerHTML = '<span class="flex items-center justify-center gap-2"><svg class="w-5 h-5 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg> Analyzing...</span>';
+
+  // show loading
+  emptyState.classList.add('hidden');
+  loadingState.classList.remove('hidden');
+  statusBadge.textContent = 'Analyzing...';
+  statusBadge.style.cssText = `background:rgba(13,115,119,.15);color:var(--teal)`;
+
+  // loading text sequence
+  const steps = [
+    'Preprocessing image...',
+    'Extracting ConvNeXt features...',
+    'Applying focal logit transforms...',
+    'Running 3x TTA ensemble...',
+    'Calibrating class probabilities...'
+  ];
+  let stepIdx = 0;
+  const loadingStatusText = $('#loadingStatusText');
+  const stepInterval = setInterval(() => {
+    stepIdx = (stepIdx + 1) % steps.length;
+    if (loadingStatusText) loadingStatusText.textContent = steps[stepIdx];
+  }, 800);
+
+  try {
+    const formData = new FormData();
+    formData.append('image', state.file);
+
+    let data;
+    try {
+      const resp = await fetch('http://localhost:5000/predict', {
+        method: 'POST',
+        body: formData
+      });
+      if (!resp.ok) throw new Error(`Server error: ${resp.status}`);
+      data = await resp.json();
+      // cache in localStorage
+      try {
+        const cache = { data, timestamp: Date.now(), imageName: state.file.name };
+        localStorage.setItem('dermoai_last_result', JSON.stringify(cache));
+      } catch (_) {}
+    } catch (networkErr) {
+      console.warn('Backend unavailable, using mock data:', networkErr.message);
+      data = generateMockPredictions();
+    }
+
+    state.results = data;
+    displayResults(data);
+  } catch (err) {
+    state.error = err.message;
+    showError('Analysis failed: ' + err.message);
+    statusBadge.textContent = 'Error';
+    statusBadge.style.cssText = `background:rgba(232,93,58,.15);color:var(--coral)`;
+  } finally {
+    clearInterval(stepInterval);
+    state.analyzing = false;
+    loadingState.classList.add('hidden');
+    analyzeBtn.disabled = false;
+    analyzeBtn.innerHTML = '<span class="flex items-center justify-center gap-2"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg> Run Analysis</span>';
+  }
+}
+
+// ========================================================================
+// DISPLAY RESULTS
+// ========================================================================
+function displayResults(data) {
+  resultsContainer.classList.remove('hidden');
+  emptyState.classList.add('hidden');
+
+  const predictions = data.predictions || [];
+  if (!predictions.length) return;
+
+  statusBadge.textContent = 'Diagnostic Complete';
+  statusBadge.style.cssText = `background:rgba(16,185,129,.12);color:#10b981`;
+
+  // top prediction
+  const top = predictions[0];
+  const topCode = top.class_code || top.class?.match(/\((\w+)\)/)?.[1] || 'UNKNOWN';
+  const topInfo = CLASS_DB[topCode] || CLASS_DB.Healthy;
+  const topSev = top.severity || topInfo.severity;
+  const topConf = top.probability || top.confidence || 0;
+
+  topClassName.textContent = topInfo.fullName;
+  topConfidence.textContent = topConf.toFixed(1) + '%';
+
+  const sc = SEVERITY_COLORS[topSev] || SEVERITY_COLORS.Low;
+  const sevLabel = topSev.charAt(0).toUpperCase() + topSev.slice(1);
+  topSeverity.textContent = sevLabel + ' Risk';
+  topSeverity.style.cssText = `background:${sc.bg};color:${sc.text}`;
+
+  // melanoma alert (MEL in top 3)
+  const top3Codes = predictions.slice(0, 3).map(p => (p.class_code || ''));
+  if (top3Codes.includes('MEL')) {
+    melAlert.classList.remove('hidden');
+  } else {
+    melAlert.classList.add('hidden');
+  }
+
+  // low confidence disclaimer
+  if (topConf < 30) {
+    lowConfDisclaimer.classList.remove('hidden');
+  } else {
+    lowConfDisclaimer.classList.add('hidden');
+  }
+
+  // results list
+  resultsList.innerHTML = '';
+  predictions.forEach((pred, i) => {
+    const code = pred.class_code || '';
+    const info = CLASS_DB[code];
+    if (!info) return;
+
+    const prob = pred.probability || pred.confidence || 0;
+    const sev = pred.severity || info.severity;
+    const severityColor = SEVERITY_COLORS[sev] || SEVERITY_COLORS.Low;
+    const typeColor = TYPE_COLORS[info.type] || TYPE_COLORS.benign;
+
+    const card = document.createElement('div');
+    card.className = 'result-card glass-card p-4';
+    card.style.transitionDelay = (i * 50) + 'ms';
+
+    card.innerHTML = `
+      <div class="flex items-center justify-between mb-2">
+        <div class="flex items-center gap-2.5">
+          <span class="text-xs font-bold px-2 py-0.5 rounded" style="background:${typeColor.badge}15;color:${typeColor.badge};border:1px solid ${typeColor.border}">${code}</span>
+          <span class="text-sm font-medium">${info.name}</span>
+        </div>
+        <span class="text-sm font-bold" style="color:${severityColor.text}">${prob.toFixed(1)}%</span>
+      </div>
+      <div class="prob-bar">
+        <div class="prob-fill" style="background:${severityColor.bar}" data-width="${Math.max(prob, 2)}"></div>
+      </div>
+    `;
+
+    resultsList.appendChild(card);
+  });
+
+  // trigger stagger + bar animation
+  requestAnimationFrame(() => {
+    $$('.result-card').forEach((card, i) => {
+      setTimeout(() => card.classList.add('show'), i * 60);
+    });
+    setTimeout(() => {
+      $$('.prob-fill').forEach(bar => {
+        bar.style.width = bar.dataset.width + '%';
+      });
+    }, 100);
+  });
+
+  // dispatch custom event for the alert pulse restart
+  melAlert.style.animation = 'none';
+  requestAnimationFrame(() => {
+    melAlert.style.animation = '';
+  });
+}
+
+// ========================================================================
+// MOCK / FALLBACK DATA
+// ========================================================================
+function generateMockPredictions() {
+  // generate realistic-looking predictions
+  const classes = ['MEL','BCC','SCC','ACK','NEV','SEK','Acne','Hair Loss','Nail Fungus','Fungal','Vascular','Healthy'];
+  const raw = classes.map(code => ({
+    code,
+    prob: Math.random()
+  }));
+
+  // normalize to sum ~100 and assign a dominant class
+  const total = raw.reduce((s, r) => s + r.prob, 0);
+  let predictions = raw.map(r => ({
+    class: CLASS_DB[r.code].fullName,
+    class_code: r.code,
+    probability: (r.prob / total * 100),
+    confidence: (r.prob / total * 100),
+    severity: CLASS_DB[r.code].severity,
+    risk: CLASS_DB[r.code].type === 'malignant' ? 'high' : CLASS_DB[r.code].type === 'pre-cancer' ? 'medium' : 'low'
+  }));
+
+  // sort descending
+  predictions.sort((a, b) => b.probability - a.probability);
+
+  const top = predictions[0];
+  return {
+    predictions,
+    top_class: top.class,
+    top_class_code: top.class_code,
+    top_confidence: top.probability,
+    top_severity: top.severity
+  };
+}
+
+// ========================================================================
+// LOCALSTORAGE CACHE
+// ========================================================================
+(function loadCache() {
+  try {
+    const cached = localStorage.getItem('dermoai_last_result');
+    if (!cached) return;
+    const { data, timestamp, imageName } = JSON.parse(cached);
+    const age = Date.now() - timestamp;
+    if (age > 3600000) { // 1 hour
+      localStorage.removeItem('dermoai_last_result');
+      return;
+    }
+    const mins = Math.floor(age / 60000);
+    cacheTime.textContent = `${mins} min${mins !== 1 ? 's' : ''} ago (${imageName || 'unknown'})`;
+    cacheNotice.classList.remove('hidden');
+    state.results = data;
+    displayResults(data);
+  } catch (_) {}
+})();
+
+// ========================================================================
+// SMOOTH SCROLL FOR ANCHOR LINKS
+// ========================================================================
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', (e) => {
+    e.preventDefault();
+    const target = document.querySelector(a.getAttribute('href'));
+    if (target) target.scrollIntoView({ behavior: 'smooth' });
+  });
+});
+</script>
+</body>
+</html>

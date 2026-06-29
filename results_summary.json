@@ -1,0 +1,55 @@
+{
+  "device": "cuda",
+  "baseline": {
+    "accuracy": 0.844,
+    "mel_recall": 0.6159420289855072,
+    "scc_recall": 0.488,
+    "mel_f1": 0.685483870967742,
+    "scc_f1": 0.5374449339207048
+  },
+  "experiments": {
+    "ce_ls": {
+      "checkpoint": "C:\\Users\\Ishan\\skin_cancer_project\\dermoai_optimized\\ce_ls_best.pth",
+      "accuracy": 0.8279049295774648,
+      "mel_recall": 0.7862318840579711,
+      "scc_recall": 0.616,
+      "mel_f1": 0.6506746626686657,
+      "scc_f1": 0.529209621993127,
+      "cancer_sensitivity": 0.8721991701244813,
+      "cancer_specificity": 0.9224318658280922,
+      "mel_to_nev_pct": 8.333333333333332
+    },
+    "focal_g1": {
+      "checkpoint": "C:\\Users\\Ishan\\skin_cancer_project\\dermoai_optimized\\focal_g1_best.pth",
+      "accuracy": 0.8263644366197183,
+      "mel_recall": 0.782608695652174,
+      "scc_recall": 0.6,
+      "mel_f1": 0.6467065868263473,
+      "scc_f1": 0.5154639175257733,
+      "cancer_sensitivity": 0.8713692946058091,
+      "cancer_specificity": 0.9224318658280922,
+      "mel_to_nev_pct": 9.057971014492754
+    }
+  },
+  "ensemble": {
+    "accuracy": 0.8279049295774648,
+    "mel_recall": 0.7862318840579711,
+    "scc_recall": 0.616,
+    "mel_f1": 0.6497005988023953,
+    "scc_f1": 0.529209621993127,
+    "cancer_sensitivity": 0.8730290456431535,
+    "cancer_specificity": 0.9227313566936208,
+    "mel_to_nev_pct": 9.057971014492754
+  },
+  "bias_sweep": {
+    "selected_bias": -1.2,
+    "accuracy": 0.8408890845070423,
+    "mel_recall": 0.6123188405797102,
+    "scc_recall": 0.624,
+    "mel_f1": 0.6800804828973843,
+    "scc_f1": 0.527027027027027,
+    "cancer_sensitivity": 0.833195020746888,
+    "cancer_specificity": 0.9538784067085954,
+    "mel_to_nev_pct": 24.27536231884058
+  }
+}
