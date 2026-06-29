@@ -941,7 +941,7 @@ function displayResults(data) {
   topClassName.textContent = topInfo.fullName;
   topConfidence.textContent = topConf.toFixed(1) + '%';
 
-  const sc = SEVERITY_COLORS[topSev] || SEVERITY_COLORS.Low;
+  const sc = SEVERITY_COLORS[topSev] || SEVERITY_COLORS.low;
   const sevLabel = topSev.charAt(0).toUpperCase() + topSev.slice(1);
   topSeverity.textContent = sevLabel + ' Risk';
   topSeverity.style.cssText = `background:${sc.bg};color:${sc.text}`;

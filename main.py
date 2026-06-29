@@ -13,7 +13,7 @@ import uvicorn
 
 app = FastAPI()
 
-app.mount("/test", StaticFiles(directory="test"), name="test")
+app.mount("/webapp", StaticFiles(directory="webapp"), name="webapp")
 
 # 12 Classes mapping
 CLASSES = ["BCC", "ACK", "NEV", "SEK", "SCC", "MEL", "Acne", "Alopecia", "Nail", "Fungal", "Vascular", "Healthy"]
@@ -186,7 +186,7 @@ transform = transforms.Compose([
 
 @app.get("/")
 def read_index():
-    index_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "index.html")
+    index_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "webapp", "index.html")
     with open(index_path, "r", encoding="utf-8") as f:
         return HTMLResponse(content=f.read())
 
