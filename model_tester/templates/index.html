@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#f2f5ef">
+    <title>DermoAI V2 — Local Model Tester</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='app.css') }}">
+    <script defer src="{{ url_for('static', filename='app.js') }}"></script>
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="topbar">
+        <a class="brand" href="/" aria-label="DermoAI tester home">
+          <span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></span>
+          <span><strong>DermoAI</strong><small>V2 LAB</small></span>
+        </a>
+        <div class="model-status" id="modelStatus" role="status">
+          <span class="status-dot"></span>
+          <span id="modelStatusText">Checking local model</span>
+        </div>
+      </header>
+
+      <main>
+        <section class="intro" aria-labelledby="pageTitle">
+          <div>
+            <p class="eyebrow">LOCAL IMAGE CLASSIFIER · 12 CLASSES</p>
+            <h1 id="pageTitle">See what the model sees.</h1>
+          </div>
+          <p class="intro-copy">Upload one skin image to inspect the V2 model’s complete output—not just its first choice. Every image stays on this computer.</p>
+        </section>
+
+        <div class="workspace-grid">
+          <section class="image-panel" aria-labelledby="imagePanelTitle">
+            <div class="section-heading">
+              <span class="step-number">01</span>
+              <div>
+                <p class="section-kicker">Input</p>
+                <h2 id="imagePanelTitle">Choose a clear image</h2>
+              </div>
+            </div>
+
+            <form id="predictionForm">
+              <label class="drop-zone" id="dropZone" for="imageInput">
+                <input id="imageInput" name="image" type="file" accept="image/jpeg,image/png,image/webp,image/bmp" hidden>
+                <div class="drop-prompt" id="dropPrompt">
+                  <svg viewBox="0 0 48 48" aria-hidden="true">
+                    <path d="M24 7v24m0-24-8 8m8-8 8 8M10 29v8a4 4 0 0 0 4 4h20a4 4 0 0 0 4-4v-8"/>
+                  </svg>
+                  <strong>Drop a skin image here</strong>
+                  <span>or click to browse · JPG, PNG, WebP, BMP · max 16 MB</span>
+                </div>
+                <div class="preview-wrap" id="previewWrap" hidden>
+                  <img id="imagePreview" alt="Selected skin image preview">
+                  <span class="preview-change">Click or drop to replace</span>
+                </div>
+              </label>
+
+              <div class="file-row" id="fileRow" hidden>
+                <div>
+                  <strong id="fileName"></strong>
+                  <span id="fileMeta"></span>
+                </div>
+                <button class="text-button" id="clearButton" type="button">Remove</button>
+              </div>
+
+              <button class="analyze-button" id="analyzeButton" type="submit" disabled>
+                <span>Analyze image</span>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-5-5 5 5-5 5"/></svg>
+              </button>
+            </form>
+
+            <div class="privacy-note">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 5 6v5c0 4.5 2.8 8.4 7 10 4.2-1.6 7-5.5 7-10V6l-7-3Z"/><path d="m9 12 2 2 4-4"/></svg>
+              <p><strong>Local by design.</strong> Images are analyzed in memory and are not saved by this app.</p>
+            </div>
+          </section>
+
+          <section class="results-panel" aria-labelledby="resultsTitle">
+            <div class="section-heading results-heading">
+              <span class="step-number">02</span>
+              <div>
+                <p class="section-kicker">Output</p>
+                <h2 id="resultsTitle">Model readout</h2>
+              </div>
+              <span class="result-state" id="resultState">Waiting for image</span>
+            </div>
+
+            <div class="empty-state" id="emptyState">
+              <div class="class-orbit" aria-hidden="true">
+                <span>12</span>
+                <i style="--i:0"></i><i style="--i:1"></i><i style="--i:2"></i><i style="--i:3"></i>
+                <i style="--i:4"></i><i style="--i:5"></i><i style="--i:6"></i><i style="--i:7"></i>
+                <i style="--i:8"></i><i style="--i:9"></i><i style="--i:10"></i><i style="--i:11"></i>
+              </div>
+              <h3>One image. Every prediction.</h3>
+              <p>The complete ranked output will appear here with exact class indices and raw model scores.</p>
+            </div>
+
+            <div class="loading-state" id="loadingState" hidden aria-live="polite">
+              <div class="scan-frame"><div class="scan-line"></div></div>
+              <div>
+                <strong>Running ConvNeXt V2</strong>
+                <span>Preparing the image and comparing all 12 classes…</span>
+              </div>
+            </div>
+
+            <div class="error-state" id="errorState" hidden role="alert">
+              <strong>Couldn’t analyze that image</strong>
+              <p id="errorMessage"></p>
+            </div>
+
+            <div class="result-content" id="resultContent" hidden aria-live="polite">
+              <div class="headline-result">
+                <div class="top-prediction">
+                  <p>Top model match</p>
+                  <div class="prediction-code-row">
+                    <span class="class-index" id="topIndex"></span>
+                    <strong id="topCode"></strong>
+                  </div>
+                  <h3 id="topName"></h3>
+                  <span class="group-tag" id="topGroup"></span>
+                </div>
+                <div class="confidence-readout">
+                  <span id="topConfidence">0.00%</span>
+                  <small>raw model score</small>
+                </div>
+              </div>
+
+              <div class="prediction-header">
+                <div>
+                  <p class="section-kicker">Full distribution</p>
+                  <h3>All 12 predictions</h3>
+                </div>
+                <span>Highest first</span>
+              </div>
+              <ol class="prediction-list" id="predictionList"></ol>
+
+              <div class="run-meta" id="runMeta"></div>
+            </div>
+          </section>
+        </div>
+
+        <aside class="research-notice">
+          <span>Research use only</span>
+          <p>This tool does not diagnose disease. Its scores are uncalibrated neural-network outputs and can be wrong, especially on unfamiliar cameras, skin tones, body sites, or conditions. Seek a qualified clinician for any health concern.</p>
+        </aside>
+      </main>
+
+      <footer>
+        <span>DermoAI V2 · ConvNeXt V2 Base</span>
+        <span>Runs locally on <span id="deviceLabel">your computer</span></span>
+      </footer>
+    </div>
+  </body>
+</html>

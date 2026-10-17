@@ -1,0 +1,9 @@
+{
+  "checkpoint": "C:\\Users\\Ishan\\Documents\\Codex\\2026-10-15\\referenced-chatgpt-conversation-this-is-an\\outputs\\dermoai\\runtime\\20261016-152650-e30bec65\\epoch-0002.pt",
+  "sha256": "9d0cb9f692397b81ac5527cda06d9d9502056e6edead6440060150b8ce316c21",
+  "epoch": 2,
+  "selection_metric": "balanced_cancer_safety",
+  "selection_split": "validation",
+  "dataset_version": "05cdbd7e3dd527f9b6ee434d2e98de6d7258260cf142b3ef0022ec019ccf5ccb",
+  "test_used_for_selection": false
+}

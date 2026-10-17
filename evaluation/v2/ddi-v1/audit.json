@@ -1,0 +1,19 @@
+{
+  "purpose": "sealed external research evaluation only; excluded from training and model selection",
+  "manifest": "C:\\Users\\Ishan\\Documents\\Codex\\2026-10-15\\referenced-chatgpt-conversation-this-is-an\\outputs\\dermoai\\external-eval\\ddi\\manifest.csv",
+  "training_manifest": "C:\\Users\\Ishan\\Documents\\Codex\\2026-10-15\\referenced-chatgpt-conversation-this-is-an\\outputs\\dermoai\\datasets\\training-v2.csv",
+  "external_source_counts": {
+    "Stanford-DDI-v1": 318
+  },
+  "overlap_audit": {
+    "training_images_hashed": 36496,
+    "external_images_hashed": 318,
+    "exact_overlaps": []
+  },
+  "limitations": [
+    "Exact byte overlap with the frozen v2 training manifest is excluded; semantic or historical overlap cannot be proven absent.",
+    "The original model's undocumented historical training membership cannot be fully reconstructed.",
+    "Dataset labels are used as supplied and are not a clinical validation.",
+    "No threshold tuning, training, validation selection, or checkpoint selection may use these results."
+  ]
+}

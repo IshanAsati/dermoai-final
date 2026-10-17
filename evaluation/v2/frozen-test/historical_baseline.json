@@ -1,0 +1,8 @@
+{
+  "status": "historical user-reported results; not measured by this pipeline",
+  "accuracy": 0.8279,
+  "cancer_sensitivity": 0.873,
+  "cancer_specificity": 0.9227,
+  "validation_images_reported": 4555,
+  "comparability": "Original dataset, class mapping and split unavailable; direct comparison is not valid"
+}

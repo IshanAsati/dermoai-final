@@ -1,0 +1,9 @@
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+model_tester/server.pid
+model_tester/server.log
+model_tester/server-error.log
+model_tester/tests/browser-sample.png
+model_tester/tests/browser-result.png

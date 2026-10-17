@@ -1,0 +1,638 @@
+{
+  "state": "completed",
+  "pid": 30020,
+  "architecture": "convnextv2_base",
+  "pretrained_checkpoint": "convnextv2_base.fcmae_ft_in22k_in1k",
+  "pretrained_used": true,
+  "dataset_version": "05cdbd7e3dd527f9b6ee434d2e98de6d7258260cf142b3ef0022ec019ccf5ccb",
+  "split_ids": {
+    "train": "a253f1ca0b82314600b76543f726b7611d73757434a56b2f6570a718490e2ef0",
+    "validation": "abe085e4ddfb309d289362f2c31ec04dbf6bfea025e2c2688f03b729c1780c36",
+    "test": "50af5b67b5293a9e628b1669c4f035197c677e38b0955359589ae207eaa25cc4"
+  },
+  "epoch": 8,
+  "epochs": 12,
+  "best_epoch": 2,
+  "synthetic": false,
+  "checkpoints": [
+    "C:\\Users\\Ishan\\Documents\\Codex\\2026-10-15\\referenced-chatgpt-conversation-this-is-an\\outputs\\dermoai\\runtime\\20261016-152650-e30bec65\\epoch-0001.pt",
+    "C:\\Users\\Ishan\\Documents\\Codex\\2026-10-15\\referenced-chatgpt-conversation-this-is-an\\outputs\\dermoai\\runtime\\20261016-152650-e30bec65\\epoch-0002.pt",
+    "C:\\Users\\Ishan\\Documents\\Codex\\2026-10-15\\referenced-chatgpt-conversation-this-is-an\\outputs\\dermoai\\runtime\\20261016-152650-e30bec65\\epoch-0003.pt",
+    "C:\\Users\\Ishan\\Documents\\Codex\\2026-10-15\\referenced-chatgpt-conversation-this-is-an\\outputs\\dermoai\\runtime\\20261016-152650-e30bec65\\epoch-0004.pt",
+    "C:\\Users\\Ishan\\Documents\\Codex\\2026-10-15\\referenced-chatgpt-conversation-this-is-an\\outputs\\dermoai\\runtime\\20261016-152650-e30bec65\\epoch-0005.pt",
+    "C:\\Users\\Ishan\\Documents\\Codex\\2026-10-15\\referenced-chatgpt-conversation-this-is-an\\outputs\\dermoai\\runtime\\20261016-152650-e30bec65\\epoch-0006.pt",
+    "C:\\Users\\Ishan\\Documents\\Codex\\2026-10-15\\referenced-chatgpt-conversation-this-is-an\\outputs\\dermoai\\runtime\\20261016-152650-e30bec65\\epoch-0007.pt",
+    "C:\\Users\\Ishan\\Documents\\Codex\\2026-10-15\\referenced-chatgpt-conversation-this-is-an\\outputs\\dermoai\\runtime\\20261016-152650-e30bec65\\epoch-0008.pt"
+  ],
+  "resumed_from": null,
+  "exploratory": true,
+  "data_warnings": [
+    "Exploratory only: patient separation cannot be verified for {'DermNet-Kaggle': 4356, 'ISIC-2019': 22940, 'Skin-Types-Kaggle-normal': 1192}",
+    "36496 dataset-source labels authorized for exploratory use; not human-reviewed annotations"
+  ],
+  "class_weights": null,
+  "sampling": "sqrt_inverse",
+  "warm_start": {
+    "checkpoint": "C:\\Users\\Ishan\\Documents\\Codex\\2026-10-15\\referenced-chatgpt-conversation-this-is-an\\outputs\\dermoai\\runtime\\20261016-131856-b356b125\\epoch-0004.pt",
+    "sha256": "a776fb3bf11d13ce3b1abc1507cb66f7d521bd41940dc9df5f57b47717b6a8b9",
+    "epoch": 4
+  },
+  "train_images": 28056,
+  "validation_images": 4104,
+  "trainable_parameters": 33870348,
+  "phase": "validation",
+  "batch": 3507,
+  "batches": 3507,
+  "best_selection_score": 0.7874314008291146,
+  "validation_metrics": {
+    "research_only": true,
+    "n": 4104,
+    "accuracy": 0.7807017543859649,
+    "macro_f1": 0.7529880681340081,
+    "per_class": {
+      "BCC": {
+        "precision": 0.6647058823529411,
+        "recall": 0.8188405797101449,
+        "f1-score": 0.7337662337662337,
+        "support": 414.0
+      },
+      "ACK": {
+        "precision": 0.65,
+        "recall": 0.5445026178010471,
+        "f1-score": 0.5925925925925926,
+        "support": 191.0
+      },
+      "NEV": {
+        "precision": 0.871523915461624,
+        "recall": 0.8710394663702057,
+        "f1-score": 0.8712816235752016,
+        "support": 1799.0
+      },
+      "SEK": {
+        "precision": 0.5909090909090909,
+        "recall": 0.4774011299435028,
+        "f1-score": 0.528125,
+        "support": 354.0
+      },
+      "SCC": {
+        "precision": 0.43902439024390244,
+        "recall": 0.28125,
+        "f1-score": 0.34285714285714286,
+        "support": 64.0
+      },
+      "MEL": {
+        "precision": 0.5321637426900585,
+        "recall": 0.5605749486652978,
+        "f1-score": 0.546,
+        "support": 487.0
+      },
+      "Acne": {
+        "precision": 0.9230769230769231,
+        "recall": 0.8807339449541285,
+        "f1-score": 0.9014084507042254,
+        "support": 109.0
+      },
+      "Alopecia": {
+        "precision": 0.8518518518518519,
+        "recall": 0.7666666666666667,
+        "f1-score": 0.8070175438596491,
+        "support": 30.0
+      },
+      "Nail": {
+        "precision": 0.9378238341968912,
+        "recall": 0.9679144385026738,
+        "f1-score": 0.9526315789473684,
+        "support": 187.0
+      },
+      "Fungal": {
+        "precision": 0.927710843373494,
+        "recall": 0.9352226720647774,
+        "f1-score": 0.9314516129032258,
+        "support": 247.0
+      },
+      "Vascular": {
+        "precision": 0.8260869565217391,
+        "recall": 0.8407079646017699,
+        "f1-score": 0.8333333333333334,
+        "support": 113.0
+      },
+      "Healthy": {
+        "precision": 1.0,
+        "recall": 0.9908256880733946,
+        "f1-score": 0.9953917050691244,
+        "support": 109.0
+      }
+    },
+    "confusion_matrix": [
+      [
+        339,
+        19,
+        17,
+        13,
+        8,
+        16,
+        0,
+        0,
+        0,
+        0,
+        2,
+        0
+      ],
+      [
+        37,
+        104,
+        7,
+        15,
+        7,
+        21,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        38,
+        5,
+        1567,
+        48,
+        0,
+        137,
+        0,
+        0,
+        0,
+        0,
+        4,
+        0
+      ],
+      [
+        29,
+        13,
+        74,
+        169,
+        5,
+        64,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        26,
+        12,
+        1,
+        6,
+        18,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        38,
+        7,
+        128,
+        34,
+        3,
+        273,
+        0,
+        0,
+        0,
+        0,
+        4,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        96,
+        2,
+        2,
+        7,
+        2,
+        0
+      ],
+      [
+        0,
+        0,
+        2,
+        0,
+        0,
+        0,
+        2,
+        23,
+        0,
+        3,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        181,
+        4,
+        2,
+        0
+      ],
+      [
+        0,
+        0,
+        1,
+        0,
+        0,
+        1,
+        3,
+        2,
+        3,
+        231,
+        6,
+        0
+      ],
+      [
+        3,
+        0,
+        1,
+        0,
+        0,
+        0,
+        3,
+        0,
+        7,
+        4,
+        95,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        108
+      ]
+    ],
+    "class_order": [
+      "BCC",
+      "ACK",
+      "NEV",
+      "SEK",
+      "SCC",
+      "MEL",
+      "Acne",
+      "Alopecia",
+      "Nail",
+      "Fungal",
+      "Vascular",
+      "Healthy"
+    ],
+    "cancer_sensitivity": 0.7481865284974093,
+    "cancer_specificity": 0.8910481044918764,
+    "false_positives": 342,
+    "false_negatives": 243,
+    "smartphone_accuracy": 0.7038123167155426,
+    "high_risk_classes": [
+      "BCC",
+      "SCC",
+      "MEL"
+    ],
+    "smartphone_n": 341,
+    "epoch": 8,
+    "train_loss": 0.21932106639946633,
+    "split": "validation",
+    "split_id": "abe085e4ddfb309d289362f2c31ec04dbf6bfea025e2c2688f03b729c1780c36",
+    "dataset_version": "05cdbd7e3dd527f9b6ee434d2e98de6d7258260cf142b3ef0022ec019ccf5ccb",
+    "synthetic": false,
+    "selection_score": 0.7831900461005243,
+    "selection_metric": "balanced_cancer_safety",
+    "exploratory": true,
+    "data_warnings": [
+      "Exploratory only: patient separation cannot be verified for {'DermNet-Kaggle': 4356, 'ISIC-2019': 22940, 'Skin-Types-Kaggle-normal': 1192}",
+      "36496 dataset-source labels authorized for exploratory use; not human-reviewed annotations"
+    ],
+    "learning_rate": 3.27677868824104e-05
+  },
+  "best_validation_metrics": {
+    "research_only": true,
+    "n": 4104,
+    "accuracy": 0.7746101364522417,
+    "macro_f1": 0.7513047907144488,
+    "per_class": {
+      "BCC": {
+        "precision": 0.66,
+        "recall": 0.7971014492753623,
+        "f1-score": 0.7221006564551422,
+        "support": 414.0
+      },
+      "ACK": {
+        "precision": 0.6645962732919255,
+        "recall": 0.5602094240837696,
+        "f1-score": 0.6079545454545454,
+        "support": 191.0
+      },
+      "NEV": {
+        "precision": 0.8860164512338425,
+        "recall": 0.8382434685936632,
+        "f1-score": 0.8614681519565839,
+        "support": 1799.0
+      },
+      "SEK": {
+        "precision": 0.5852842809364549,
+        "recall": 0.4943502824858757,
+        "f1-score": 0.5359877488514548,
+        "support": 354.0
+      },
+      "SCC": {
+        "precision": 0.391304347826087,
+        "recall": 0.28125,
+        "f1-score": 0.32727272727272727,
+        "support": 64.0
+      },
+      "MEL": {
+        "precision": 0.5191986644407346,
+        "recall": 0.6386036960985626,
+        "f1-score": 0.572744014732965,
+        "support": 487.0
+      },
+      "Acne": {
+        "precision": 0.9134615384615384,
+        "recall": 0.8715596330275229,
+        "f1-score": 0.892018779342723,
+        "support": 109.0
+      },
+      "Alopecia": {
+        "precision": 0.8518518518518519,
+        "recall": 0.7666666666666667,
+        "f1-score": 0.8070175438596491,
+        "support": 30.0
+      },
+      "Nail": {
+        "precision": 0.946524064171123,
+        "recall": 0.946524064171123,
+        "f1-score": 0.946524064171123,
+        "support": 187.0
+      },
+      "Fungal": {
+        "precision": 0.9243027888446215,
+        "recall": 0.9392712550607287,
+        "f1-score": 0.9317269076305221,
+        "support": 247.0
+      },
+      "Vascular": {
+        "precision": 0.7916666666666666,
+        "recall": 0.8407079646017699,
+        "f1-score": 0.8154506437768241,
+        "support": 113.0
+      },
+      "Healthy": {
+        "precision": 1.0,
+        "recall": 0.9908256880733946,
+        "f1-score": 0.9953917050691244,
+        "support": 109.0
+      }
+    },
+    "confusion_matrix": [
+      [
+        330,
+        18,
+        17,
+        15,
+        12,
+        19,
+        0,
+        0,
+        0,
+        0,
+        3,
+        0
+      ],
+      [
+        35,
+        107,
+        6,
+        14,
+        7,
+        22,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        47,
+        7,
+        1508,
+        58,
+        1,
+        174,
+        0,
+        0,
+        0,
+        0,
+        4,
+        0
+      ],
+      [
+        30,
+        15,
+        59,
+        175,
+        5,
+        69,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0
+      ],
+      [
+        26,
+        11,
+        1,
+        4,
+        18,
+        4,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        28,
+        3,
+        108,
+        32,
+        3,
+        311,
+        0,
+        0,
+        0,
+        0,
+        2,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        95,
+        2,
+        2,
+        7,
+        3,
+        0
+      ],
+      [
+        0,
+        0,
+        2,
+        0,
+        0,
+        0,
+        1,
+        23,
+        0,
+        4,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        177,
+        4,
+        5,
+        0
+      ],
+      [
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        3,
+        2,
+        2,
+        232,
+        7,
+        0
+      ],
+      [
+        3,
+        0,
+        1,
+        0,
+        0,
+        0,
+        4,
+        0,
+        6,
+        4,
+        95,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        108
+      ]
+    ],
+    "class_order": [
+      "BCC",
+      "ACK",
+      "NEV",
+      "SEK",
+      "SCC",
+      "MEL",
+      "Acne",
+      "Alopecia",
+      "Nail",
+      "Fungal",
+      "Vascular",
+      "Healthy"
+    ],
+    "cancer_sensitivity": 0.778238341968912,
+    "cancer_specificity": 0.8744823192099395,
+    "false_positives": 394,
+    "false_negatives": 214,
+    "smartphone_accuracy": 0.6920821114369502,
+    "high_risk_classes": [
+      "BCC",
+      "SCC",
+      "MEL"
+    ],
+    "smartphone_n": 341,
+    "epoch": 2,
+    "train_loss": 0.2957263182915613,
+    "split": "validation",
+    "split_id": "abe085e4ddfb309d289362f2c31ec04dbf6bfea025e2c2688f03b729c1780c36",
+    "dataset_version": "05cdbd7e3dd527f9b6ee434d2e98de6d7258260cf142b3ef0022ec019ccf5ccb",
+    "synthetic": false,
+    "selection_score": 0.7874314008291146,
+    "selection_metric": "balanced_cancer_safety",
+    "exploratory": true,
+    "data_warnings": [
+      "Exploratory only: patient separation cannot be verified for {'DermNet-Kaggle': 4356, 'ISIC-2019': 22940, 'Skin-Types-Kaggle-normal': 1192}",
+      "36496 dataset-source labels authorized for exploratory use; not human-reviewed annotations"
+    ],
+    "learning_rate": 9.807591624668864e-05
+  },
+  "last_checkpoint": "C:\\Users\\Ishan\\Documents\\Codex\\2026-10-15\\referenced-chatgpt-conversation-this-is-an\\outputs\\dermoai\\runtime\\20261016-152650-e30bec65\\epoch-0008.pt",
+  "best_checkpoint": "C:\\Users\\Ishan\\Documents\\Codex\\2026-10-15\\referenced-chatgpt-conversation-this-is-an\\outputs\\dermoai\\runtime\\20261016-152650-e30bec65\\epoch-0002.pt",
+  "epoch_in_progress": 8,
+  "learning_rate": 3.27677868824104e-05,
+  "parameter_group_learning_rates": [
+    6.55355737648208e-06,
+    3.27677868824104e-05
+  ],
+  "batch_size": 8,
+  "elapsed_seconds": 3263.270162343979,
+  "gpu_allocated_mb": 744.15869140625,
+  "gpu_peak_mb": 2822.7412109375,
+  "stop_reason": "validation_selection_score_early_stopping"
+}
