@@ -1,0 +1,26 @@
+{
+  "passed": true,
+  "synthetic_only": true,
+  "real_training_started": false,
+  "checkpoint_written": false,
+  "architecture": "efficientnetv2_s",
+  "mode": "partial",
+  "unfreeze_prefixes": [
+    "blocks.5.",
+    "conv_head.",
+    "bn2."
+  ],
+  "image_size": 300,
+  "batch_size": 2,
+  "trainable_parameters": 14907444,
+  "peak_allocated_gpu_mb": 330.28759765625,
+  "tested": [
+    "pretrained weights load",
+    "training augmentation",
+    "partial fine-tuning",
+    "FP16 forward/backward",
+    "AdamW optimizer step",
+    "12-class output"
+  ],
+  "limit": "One synthetic optimizer step; not an accuracy estimate or guarantee against OOM in longer runs."
+}

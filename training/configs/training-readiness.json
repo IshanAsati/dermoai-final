@@ -1,0 +1,214 @@
+{
+  "ready_for_exploratory_training": true,
+  "ready_for_clinical_validation": false,
+  "images": 6735,
+  "excluded_images": 32,
+  "similarity_candidate_pairs": 76,
+  "splits": {
+    "test": 1349,
+    "validation": 1030,
+    "train": 4356
+  },
+  "class_distribution": [
+    {
+      "split": "test",
+      "label": "ACK",
+      "count": 78
+    },
+    {
+      "split": "test",
+      "label": "Acne",
+      "count": 310
+    },
+    {
+      "split": "test",
+      "label": "Alopecia",
+      "count": 38
+    },
+    {
+      "split": "test",
+      "label": "BCC",
+      "count": 128
+    },
+    {
+      "split": "test",
+      "label": "Fungal",
+      "count": 322
+    },
+    {
+      "split": "test",
+      "label": "Healthy",
+      "count": 9
+    },
+    {
+      "split": "test",
+      "label": "MEL",
+      "count": 6
+    },
+    {
+      "split": "test",
+      "label": "NEV",
+      "count": 37
+    },
+    {
+      "split": "test",
+      "label": "Nail",
+      "count": 233
+    },
+    {
+      "split": "test",
+      "label": "SCC",
+      "count": 17
+    },
+    {
+      "split": "test",
+      "label": "SEK",
+      "count": 50
+    },
+    {
+      "split": "test",
+      "label": "Vascular",
+      "count": 121
+    },
+    {
+      "split": "train",
+      "label": "ACK",
+      "count": 532
+    },
+    {
+      "split": "train",
+      "label": "Acne",
+      "count": 434
+    },
+    {
+      "split": "train",
+      "label": "Alopecia",
+      "count": 121
+    },
+    {
+      "split": "train",
+      "label": "BCC",
+      "count": 594
+    },
+    {
+      "split": "train",
+      "label": "Fungal",
+      "count": 988
+    },
+    {
+      "split": "train",
+      "label": "Healthy",
+      "count": 83
+    },
+    {
+      "split": "train",
+      "label": "MEL",
+      "count": 39
+    },
+    {
+      "split": "train",
+      "label": "NEV",
+      "count": 160
+    },
+    {
+      "split": "train",
+      "label": "Nail",
+      "count": 750
+    },
+    {
+      "split": "train",
+      "label": "SCC",
+      "count": 134
+    },
+    {
+      "split": "train",
+      "label": "SEK",
+      "count": 147
+    },
+    {
+      "split": "train",
+      "label": "Vascular",
+      "count": 374
+    },
+    {
+      "split": "validation",
+      "label": "ACK",
+      "count": 112
+    },
+    {
+      "split": "validation",
+      "label": "Acne",
+      "count": 109
+    },
+    {
+      "split": "validation",
+      "label": "Alopecia",
+      "count": 30
+    },
+    {
+      "split": "validation",
+      "label": "BCC",
+      "count": 110
+    },
+    {
+      "split": "validation",
+      "label": "Fungal",
+      "count": 248
+    },
+    {
+      "split": "validation",
+      "label": "Healthy",
+      "count": 22
+    },
+    {
+      "split": "validation",
+      "label": "MEL",
+      "count": 7
+    },
+    {
+      "split": "validation",
+      "label": "NEV",
+      "count": 44
+    },
+    {
+      "split": "validation",
+      "label": "Nail",
+      "count": 187
+    },
+    {
+      "split": "validation",
+      "label": "SCC",
+      "count": 31
+    },
+    {
+      "split": "validation",
+      "label": "SEK",
+      "count": 37
+    },
+    {
+      "split": "validation",
+      "label": "Vascular",
+      "count": 93
+    }
+  ],
+  "warnings": [
+    "Exploratory only: patient separation cannot be verified for {'DermNet-Kaggle': 4358}",
+    "6735 dataset-source labels authorized for exploratory use; not human-reviewed annotations"
+  ],
+  "dataset_version": "1c51c824f443700450d0e92669bf0a0488c96d7670db19d09ad9577e232ea34a",
+  "split_ids": {
+    "train": "3f8aedb071896133dd247c6a9b42a5f46eb90f52a2a2f852b617d74f1e55c1e6",
+    "validation": "8a1b2649253705f5a8fa2886b320afa65988e5ca8df93a10cd36eb5a618e82f2",
+    "test": "2b0c1dc289ddb1e2c5424628272236c5635c9b8d19115d0086b25d6c64397690"
+  },
+  "training_started": false,
+  "annotations_modified": 0,
+  "method": "Preserve PAD/Healthy split membership and DermNet source test membership. Conservatively exclude ambiguous or held-out-related training/validation records. Split remaining DermNet source-training groups using the first prespecified stratified-group fold (five folds, seed 42): approximately 80% training and 20% validation. Original files and import manifest are unchanged.",
+  "evaluation_limitations": [
+    "Unknown DermNet patient identities: similarity grouping cannot guarantee patient separation.",
+    "Source labels are unreviewed and broad categories may contain label noise.",
+    "Classes are strongly confounded with dataset source; internal results do not establish real-world smartphone generalization.",
+    "Healthy and melanoma test sets are small; estimates will be unstable.",
+    "Source license/consent constraints still apply; research-only outputs."
+  ]
+}

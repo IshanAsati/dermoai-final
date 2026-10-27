@@ -16,6 +16,10 @@ python -m venv .venv
 & ".\model_tester\start.ps1"
 ```
 
+If you only need the weights and not the full clone, download the same file from the
+[`v2.0.0` release](https://github.com/IshanAsati/dermoai-final/releases/tag/v2.0.0) — it is
+byte-identical (same SHA-256) and avoids pulling LFS history.
+
 Open [http://127.0.0.1:7861/](http://127.0.0.1:7861/).
 
 The tester:
@@ -78,6 +82,29 @@ External performance is the main warning: on the sealed 318-image DDI v1 cohort,
 
 See [`V2_MODEL_REPORT.md`](V2_MODEL_REPORT.md) for the complete methodology, per-class findings, limitations, and prioritized next steps.
 
+## Training code
+
+[`training/`](training/) contains the pipeline that produced this checkpoint: dataset
+handling, the ConvNeXt V2 model factory, the fine-tuning loop, checkpoint selection, and
+evaluation.
+
+```powershell
+python -m venv .venv
+& ".\.venv\Scripts\python.exe" -m pip install -r ".\training\requirements-tested.txt"
+& ".\.venv\Scripts\python.exe" -m pip install -e ".\training"
+& ".\.venv\Scripts\python.exe" -m dermoai.cli --config ".\training\configs\refinement-config.json" train --approve
+```
+
+The exact V2 configuration is [`training/configs/refinement-config.json`](training/configs/refinement-config.json)
+(12 configured epochs, cosine schedule, partial fine-tuning, `balanced_cancer_safety`
+selection). The frozen manifest, split fingerprints, and audit summary are under
+[`training/datasets/`](training/datasets/). See [`training/README.md`](training/README.md)
+for the recipe, requirements, and reproduction caveats.
+
+Training and real-image inference require an NVIDIA CUDA device; CPU fallback is disabled
+outside synthetic tests. Source images are not redistributed — `image_path` values in the
+manifest must be rewritten to your local image root.
+
 ## Repository layout
 
 ```text
@@ -95,6 +122,12 @@ dermoai-final/
 │   ├── dermoai_v2_convnextv2_base.pth   # V2 checkpoint via Git LFS
 │   └── ce_ls_best.pth                    # Legacy CE-LS checkpoint
 ├── evaluation/v2/                       # Frozen-test metrics and predictions
+├── training/                            # V2 training pipeline
+│   ├── dermoai/                         # Training/evaluation package
+│   ├── configs/                         # Exact V2 run configuration
+│   ├── datasets/                        # Frozen manifest + split fingerprints
+│   ├── scripts/
+│   └── tests/
 ├── V2_MODEL_REPORT.md
 ├── app.py                               # Legacy CE-LS Flask app
 ├── main.py                              # Legacy CE-LS FastAPI app

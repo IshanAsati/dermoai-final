@@ -1,0 +1,206 @@
+{
+ "valid": true,
+ "errors": [],
+ "warnings": [
+  "Exploratory only: patient separation cannot be verified for {'DermNet-Kaggle': 4356, 'ISIC-2019': 22940, 'Skin-Types-Kaggle-normal': 1192}",
+  "36496 dataset-source labels authorized for exploratory use; not human-reviewed annotations"
+ ],
+ "unknown_patient_counts": {
+  "DermNet-Kaggle": 4356,
+  "ISIC-2019": 22940,
+  "Skin-Types-Kaggle-normal": 1192
+ },
+ "source_labeled_images": 36496,
+ "images": 36496,
+ "corrupt_rows": [],
+ "exact_duplicates": [],
+ "class_distribution": [
+  {
+   "split": "test",
+   "label": "ACK",
+   "count": 171
+  },
+  {
+   "split": "test",
+   "label": "Acne",
+   "count": 310
+  },
+  {
+   "split": "test",
+   "label": "Alopecia",
+   "count": 38
+  },
+  {
+   "split": "test",
+   "label": "BCC",
+   "count": 429
+  },
+  {
+   "split": "test",
+   "label": "Fungal",
+   "count": 322
+  },
+  {
+   "split": "test",
+   "label": "Healthy",
+   "count": 55
+  },
+  {
+   "split": "test",
+   "label": "MEL",
+   "count": 479
+  },
+  {
+   "split": "test",
+   "label": "NEV",
+   "count": 1790
+  },
+  {
+   "split": "test",
+   "label": "Nail",
+   "count": 233
+  },
+  {
+   "split": "test",
+   "label": "SCC",
+   "count": 88
+  },
+  {
+   "split": "test",
+   "label": "SEK",
+   "count": 273
+  },
+  {
+   "split": "test",
+   "label": "Vascular",
+   "count": 148
+  },
+  {
+   "split": "train",
+   "label": "ACK",
+   "count": 1075
+  },
+  {
+   "split": "train",
+   "label": "Acne",
+   "count": 434
+  },
+  {
+   "split": "train",
+   "label": "Alopecia",
+   "count": 121
+  },
+  {
+   "split": "train",
+   "label": "BCC",
+   "count": 2896
+  },
+  {
+   "split": "train",
+   "label": "Fungal",
+   "count": 988
+  },
+  {
+   "split": "train",
+   "label": "Healthy",
+   "count": 1142
+  },
+  {
+   "split": "train",
+   "label": "MEL",
+   "count": 3613
+  },
+  {
+   "split": "train",
+   "label": "NEV",
+   "count": 13683
+  },
+  {
+   "split": "train",
+   "label": "Nail",
+   "count": 750
+  },
+  {
+   "split": "train",
+   "label": "SCC",
+   "count": 604
+  },
+  {
+   "split": "train",
+   "label": "SEK",
+   "count": 2197
+  },
+  {
+   "split": "train",
+   "label": "Vascular",
+   "count": 553
+  },
+  {
+   "split": "validation",
+   "label": "ACK",
+   "count": 191
+  },
+  {
+   "split": "validation",
+   "label": "Acne",
+   "count": 109
+  },
+  {
+   "split": "validation",
+   "label": "Alopecia",
+   "count": 30
+  },
+  {
+   "split": "validation",
+   "label": "BCC",
+   "count": 414
+  },
+  {
+   "split": "validation",
+   "label": "Fungal",
+   "count": 247
+  },
+  {
+   "split": "validation",
+   "label": "Healthy",
+   "count": 109
+  },
+  {
+   "split": "validation",
+   "label": "MEL",
+   "count": 487
+  },
+  {
+   "split": "validation",
+   "label": "NEV",
+   "count": 1799
+  },
+  {
+   "split": "validation",
+   "label": "Nail",
+   "count": 187
+  },
+  {
+   "split": "validation",
+   "label": "SCC",
+   "count": 64
+  },
+  {
+   "split": "validation",
+   "label": "SEK",
+   "count": 354
+  },
+  {
+   "split": "validation",
+   "label": "Vascular",
+   "count": 113
+  }
+ ],
+ "dataset_version": "05cdbd7e3dd527f9b6ee434d2e98de6d7258260cf142b3ef0022ec019ccf5ccb",
+ "split_ids": {
+  "train": "a253f1ca0b82314600b76543f726b7611d73757434a56b2f6570a718490e2ef0",
+  "validation": "abe085e4ddfb309d289362f2c31ec04dbf6bfea025e2c2688f03b729c1780c36",
+  "test": "50af5b67b5293a9e628b1669c4f035197c677e38b0955359589ae207eaa25cc4"
+ },
+ "_bundled_note": "Per-image 'snapshot' array (36496 rows) omitted from this bundled copy for size; audit flags, counts, class distribution, dataset version and split fingerprints are unchanged."
+}
